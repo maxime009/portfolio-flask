@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  cockpit-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: cockpit_web_local
+    ports:
+      - "5001:5000"
+    volumes:
+      # Mode développement : lie le dossier de ton Mac au conteneur pour le rechargement à chaud
+      - .:/app
+    environment:
+      - FLASK_APP=app.py
+      - FLASK_ENV=development
+      - FLASK_DEBUG=1
+      - FLASK_SECRET_KEY=dev-secret-key-12345
+      - KEYCLOAK_URL=https://auth.maximefodjo.com/auth
+      - KEYCLOAK_REALM=master
+      - KEYCLOAK_CLIENT_ID=gatekeeper-app
+    # On force Flask à utiliser le mode reload en développement malgré l'utilisateur non-root
+    command: python app.py
